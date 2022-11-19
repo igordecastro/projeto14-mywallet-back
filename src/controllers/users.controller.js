@@ -1,11 +1,8 @@
 import bcrypt from "bcrypt";
-import { usersCollection } from "../database/database.js";
+import { v4 as uuidV4 } from "uuid";
+import { sessionsCollection, usersCollection } from "../database/database.js";
 import { userSchema } from "../models/user.schema.js";
 
-// export async function signIn(req,res) {
-//     const { user } = req.headers;
-
-// }
 export async function signUp(req, res) {
   const { name, password, email } = req.body;
   const { error } = userSchema.validate();
@@ -36,4 +33,18 @@ export async function signUp(req, res) {
   }
 
   res.sendStatus(201);
+}
+
+export async function signIn(req, res) {
+
+  const user = req.signedInUser;
+  const token = uuidV4();
+
+  try {
+    await sessionsCollection.insertOne({ token, userId: user._id });
+    res.send(token);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
 }
