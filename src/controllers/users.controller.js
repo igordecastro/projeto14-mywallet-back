@@ -4,8 +4,8 @@ import { sessionsCollection, usersCollection } from "../database/database.js";
 import { userSchema } from "../models/user.schema.js";
 
 export async function signUp(req, res) {
-  const { name, password, email } = req.body;
-  const { error } = userSchema.validate();
+  const bodyInfos = req.body;
+  const { error } = userSchema.validate(bodyInfos, {abortEarly: false});
 
   if (error) {
     const errors = error.details.map((detail) => detail.message);

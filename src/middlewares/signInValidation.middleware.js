@@ -20,6 +20,7 @@ export default async function signInValidation(req, res, next) {
     }
 
     req.signedInUser = user;
+    
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
