@@ -5,7 +5,8 @@ import { userSchema } from "../models/user.schema.js";
 
 export async function signUp(req, res) {
   const bodyInfos = req.body;
-  const { error } = userSchema.validate(bodyInfos, {abortEarly: false});
+  const { username, email, password } = req.body;
+  const { error } = userSchema.validate(bodyInfos, { abortEarly: false });
 
   if (error) {
     const errors = error.details.map((detail) => detail.message);
@@ -20,13 +21,13 @@ export async function signUp(req, res) {
     }
 
     const user = {
-      name,
+      username,
       email,
     };
 
     const passwordHash = bcrypt.hashSync(password, 10);
 
-    await usersCollection.insertOne({ ...user, password: passwordHash });
+    await usersCollection.insertOne({ ...user, password: passwordHash, wallet: []});
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
@@ -36,7 +37,6 @@ export async function signUp(req, res) {
 }
 
 export async function signIn(req, res) {
-
   const user = req.signedInUser;
   const token = uuidV4();
 
