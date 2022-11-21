@@ -39,10 +39,10 @@ export async function signUp(req, res) {
 export async function signIn(req, res) {
   const user = req.signedInUser;
   const token = uuidV4();
-
+  delete user.password
   try {
     await sessionsCollection.insertOne({ token, userId: user._id });
-    res.send(token);
+    res.send({...user,token});
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
